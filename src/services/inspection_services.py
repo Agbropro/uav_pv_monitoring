@@ -7,8 +7,7 @@ from src.application.inspection_repository import InspectionRepository
 from src.application.classifier import Classifier
 from src.domain.schemas import (
     InspectionImage,
-    PVInspection,
-    DBConfig
+    PVInspection
 )
 
 class InspectionService:
@@ -24,10 +23,10 @@ class InspectionService:
             self.classifier = classifier
             self.inspection_repository = inspection_repository
             
-    def inspect(self,inspection_image: InspectionImage,config:DBConfig)->PVInspection:
+    def inspect(self,inspection_image: InspectionImage)->PVInspection:
         image = self.image_repository.get(image_id=inspection_image.image_id)
         
-        asset = self.asset_repository.find_nearest_asset(config=config,latitude=inspection_image.latitude,longitude=inspection_image.longitude)
+        asset = self.asset_repository.find_nearest_asset(latitude=inspection_image.latitude,longitude=inspection_image.longitude)
 
         if asset is None:
             raise ValueError(
@@ -45,7 +44,7 @@ class InspectionService:
         )
 
         self.inspection_repository.save(
-            inspection=inspection, config=config
+            inspection=inspection
         )
 
         return inspection

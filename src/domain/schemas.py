@@ -26,10 +26,3 @@ class Asset(BaseModel):
     name:       str
     latitude:  float
     longitude:  float
-
-class DBConfig(BaseModel):
-    host:       str
-    port:       int
-    user:       str
-    password:   str
-    database:   str

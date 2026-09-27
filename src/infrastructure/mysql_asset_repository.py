@@ -1,16 +1,17 @@
 from src.application.asset_repository import AssetRepository
-from src.domain.schemas import Asset,DBConfig
+from src.domain.schemas import Asset
 from src.infrastructure.mysql import create_connection
+from src.infrastructure.mysql_config import DBConfig
 
 class MySQLAssetRepository(AssetRepository):
-    #def __init__(self,config:DBConfig)
+    def __init__(self, config: DBConfig):
+        self.config = config
     
     def find_nearest_asset( self,
-                            config:     DBConfig,
                             latitude:   float,
                             longitude:  float,
                            )->Asset | None:
-        connection = create_connection(config=config)
+        connection = create_connection(config=self.config)
         
         try:
             cursor = connection.cursor(dictionary=True)

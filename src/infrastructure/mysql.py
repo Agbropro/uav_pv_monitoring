@@ -1,5 +1,5 @@
 import mysql.connector
-from src.domain.schemas import DBConfig
+from src.infrastructure.mysql_config import DBConfig
 
 
 def create_connection(config:DBConfig):

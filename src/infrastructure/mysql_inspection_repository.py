@@ -1,10 +1,14 @@
 from src.application.inspection_repository import InspectionRepository
-from src.domain.schemas import Classification,PVInspection,DBConfig, InspectionImage
+from src.domain.schemas import Classification, PVInspection, InspectionImage
 from src.infrastructure.mysql import create_connection
+from src.infrastructure.mysql_config import DBConfig
 
 class MySQLInspectionRepository(InspectionRepository):
-    def get(self,inspection_id:str,config: DBConfig) -> PVInspection | None:
-        connection = create_connection(config=config)
+    def __init__(self, config: DBConfig):
+        self.config = config
+
+    def get(self,inspection_id:str) -> PVInspection | None:
+        connection = create_connection(config=self.config)
         try:
             cursor = connection.cursor(dictionary=True)
             
@@ -47,8 +51,8 @@ class MySQLInspectionRepository(InspectionRepository):
             cursor.close()
             connection.close()
             
-    def save(self,inspection:PVInspection, config:DBConfig)-> None:
-        connection= create_connection(config=config)
+    def save(self,inspection:PVInspection)-> None:
+        connection= create_connection(config=self.config)
         try:
             cursor = connection.cursor(dictionary=True)
             query = """
