@@ -3,7 +3,7 @@ from src.domain.schemas import Classification,PVInspection,DBConfig, InspectionI
 from src.infrastructure.mysql import create_connection
 
 class MySQLInspectionRepository(InspectionRepository):
-    def get(self,inspection_id:str,config: DBConfig) -> PVInspection:
+    def get(self,inspection_id:str,config: DBConfig) -> PVInspection | None:
         connection = create_connection(config=config)
         try:
             cursor = connection.cursor(dictionary=True)
@@ -32,7 +32,7 @@ class MySQLInspectionRepository(InspectionRepository):
                 asset_id=row["asset_id"],
                 inspection_image=InspectionImage(
                     image_id=row["image_id"],
-                    image_path=row["image_path"],
+                    image_path=None,
                     latitude=row["observed_latitude"],
                     longitude=row["observed_longitude"],
                     timestamp=row["inspected_at"]
@@ -71,9 +71,9 @@ class MySQLInspectionRepository(InspectionRepository):
             cursor.execute(query,(
                 inspection.inspection_id,
                 inspection.asset_id,
-                inspection.drone_data.image_id,
-                inspection.drone_data.latitude,
-                inspection.drone_data.longitude,
+                inspection.inspection_image.image_id,
+                inspection.inspection_image.latitude,
+                inspection.inspection_image.longitude,
                 inspection.classification.fault_type,
                 inspection.classification.confidence,
                 inspection.timestamp)

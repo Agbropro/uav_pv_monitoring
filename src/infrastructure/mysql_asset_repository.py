@@ -5,11 +5,11 @@ from src.infrastructure.mysql import create_connection
 class MySQLAssetRepository(AssetRepository):
     #def __init__(self,config:DBConfig)
     
-    def find_nearest_asset(
+    def find_nearest_asset( self,
                             config:     DBConfig,
                             latitude:   float,
                             longitude:  float,
-                           )->Asset:
+                           )->Asset | None:
         connection = create_connection(config=config)
         
         try:

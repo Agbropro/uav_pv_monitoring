@@ -3,7 +3,7 @@ from src.domain.schemas import DBConfig
 
 
 def create_connection(config:DBConfig):
-    return mysql.connect(
+    return mysql.connector.connect(
         host =      config.host,
         port =      config.port,
         user =      config.user,

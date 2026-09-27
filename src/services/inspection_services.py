@@ -45,7 +45,7 @@ class InspectionService:
         )
 
         self.inspection_repository.save(
-            inspection
+            inspection=inspection, config=config
         )
 
         return inspection

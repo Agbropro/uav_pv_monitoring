@@ -1,6 +1,4 @@
-from io import BytesIO
 from pathlib import Path
-from PIL import Image
 from src.application.image_repository import ImageRepository
 
 class LocalImageStorage(ImageRepository):
@@ -24,7 +22,4 @@ class LocalImageStorage(ImageRepository):
         image_path = self.storage_path / image_id
         with open(image_path, "wb") as file:
             file.write(image_bytes)
-        buffer = BytesIO()
-        image = Image.open(buffer(image_bytes))
-        Image.save(image_path,format=image.format)
-        return image_path
+        return str(image_path)

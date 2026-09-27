@@ -4,7 +4,7 @@ from datetime import datetime
 
 class InspectionImage(BaseModel):
     image_id:   str
-    image_path: str
+    image_path: str | None
     longitude:  float
     latitude:   float
     timestamp:  datetime

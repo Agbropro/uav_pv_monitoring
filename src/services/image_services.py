@@ -8,5 +8,5 @@ class ImageService:
     def get(self,image_id:str)->bytes:
         return self.image_repository.get(image_id=image_id)
     
-    def save(self,image_id:str, image_bytes:bytes)->None:
+    def save(self,image_id:str, image_bytes:bytes)->str:
         return self.image_repository.save(image_id=image_id,image_bytes=image_bytes)
