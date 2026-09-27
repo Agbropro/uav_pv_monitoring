@@ -23,7 +23,7 @@ class InspectionService:
             self.classifier = classifier
             self.inspection_repository = inspection_repository
             
-    def inspect(self,inspection_image: InspectionImage)->PVInspection:
+    def inspect(self,inspection_image: InspectionImage,timestamp:datetime)->PVInspection:
         image = self.image_repository.get(image_id=inspection_image.image_id)
         
         asset = self.asset_repository.find_nearest_asset(latitude=inspection_image.latitude,longitude=inspection_image.longitude)
@@ -40,7 +40,7 @@ class InspectionService:
             asset_id=   asset.asset_id,
             inspection_image= inspection_image,
             classification=classification,
-            timestamp=datetime.now()
+            timestamp=timestamp
         )
 
         self.inspection_repository.save(

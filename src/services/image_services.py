@@ -4,9 +4,9 @@ from src.domain.schemas import InspectionImage
 from datetime import datetime
 class ImageService:
     
-    def __init__(self,image_repository:ImageRepository):
+    def __init__(self,image_repository:ImageRepository, image_validator: ImageValidator):
         self.image_repository = image_repository
-        
+        self.image_validator = image_validator
     def get(self,image_id:str)->bytes:
         return self.image_repository.get(image_id=image_id)
    

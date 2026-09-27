@@ -15,31 +15,33 @@ class MySQLAssetRepository(AssetRepository):
         
         try:
             cursor = connection.cursor(dictionary=True)
-            query= """
-            SELECT
-                asset_id,
-                site_id,
-                name,
-                latitude,
-                longitude
-            FROM asset
-            ORDER BY
-                POW(latitude - %s,2)
-                + POW(longitude - %s,2)
-            LIMIT 1
-            """
-            cursor.execute(query,(latitude,longitude))
-            row = cursor.fetchone()
-            
-            if row is None:
-                return None
-            return Asset(
-                asset_id=row["asset_id"],
-                site_id=row["site_id"],
-                name=row["name"],
-                latitude=row["latitude"],
-                longitude=row["longitude"]
-            )
+            try:
+                query= """
+                SELECT
+                    asset_id,
+                    site_id,
+                    name,
+                    latitude,
+                    longitude
+                FROM asset
+                ORDER BY
+                    POW(latitude - %s,2)
+                    + POW(longitude - %s,2)
+                LIMIT 1
+                """
+                cursor.execute(query,(latitude,longitude))
+                row = cursor.fetchone()
+
+                if row is None:
+                    return None
+                return Asset(
+                    asset_id=row["asset_id"],
+                    site_id=row["site_id"],
+                    name=row["name"],
+                    latitude=row["latitude"],
+                    longitude=row["longitude"]
+                )
+            finally:
+                cursor.close()
         finally:
-            cursor.close()
             connection.close()
