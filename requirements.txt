@@ -1,3 +1,7 @@
 mysql-connector-python
 pydantic
 pillow
+torch
+torchvision
+scikit-learn
+optuna

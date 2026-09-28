@@ -1,0 +1,6 @@
+*.pyc
+data/*
+
+weights
+
+*.orig

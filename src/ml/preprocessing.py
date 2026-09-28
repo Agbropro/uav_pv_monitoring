@@ -1,50 +1,50 @@
-from math import isfinite
+from torchvision import transforms
 
-from PIL import Image, ImageOps
-from torch import Tensor
-from torchvision.transforms import functional as TF
+# MobileNetV3 is pretrained on ImageNet, where inputs were normalized
+# using these mean and standard deviation values.
+# Using the same normalization keeps our input distribution compatible
+# with the pretrained model's learned weights.
+IMAGENET_MEAN = (0.485, 0.456, 0.406)
+IMAGENET_STD = (0.229, 0.224, 0.225)
 
-
-class ThermalPreprocessor:
-    def __init__(
-        self,
-        image_size: tuple[int, int] = (96, 160),
-        *,
-        grayscale: bool = True,
-        mean: tuple[float, float, float] = (0.485, 0.456, 0.406),
-        std: tuple[float, float, float] = (0.229, 0.224, 0.225),
-        padding_color: int = 0,
-    ):
-        if len(image_size) != 2 or any(
-            not isinstance(value, int) or value <= 0 for value in image_size
-        ):
-            raise ValueError("image_size must contain positive integer height and width")
-        if len(mean) != 3 or len(std) != 3:
-            raise ValueError("mean and std must contain three values")
-        if not all(isfinite(value) for value in (*mean, *std)):
-            raise ValueError("mean and std must be finite")
-        if any(value <= 0 for value in std):
-            raise ValueError("std values must be positive")
-        if not 0 <= padding_color <= 255:
-            raise ValueError("padding_color must be in [0, 255]")
-        self.image_size = tuple(image_size)
-        self.grayscale = grayscale
-        self.mean = tuple(mean)
-        self.std = tuple(std)
-        self.padding_color = padding_color
-
-    def __call__(self, image: Image.Image) -> Tensor:
-        if image.mode not in ("L", "RGB", "RGBA"):
-            raise ValueError("Expected an 8-bit L, RGB, or RGBA image")
-        if self.grayscale:
-            image = image.convert("L")
-        image = image.convert("RGB")
-        height, width = self.image_size
-        image = ImageOps.pad(
-            image,
-            (width, height),
-            method=Image.Resampling.BILINEAR,
-            color=(self.padding_color,) * 3,
+def get_train_transform(image_size:tuple[int,int]=(48,80)):
+    return transforms.Compose([
+        transforms.Resize(
+            image_size,
+            antialias=True
+        ),
+        transforms.RandomHorizontalFlip(
+            p=0.5
+        ),
+        transforms.RandomVerticalFlip(
+            p=0.5
+        ),
+        transforms.RandomRotation(
+            degrees=5
+        ),
+        transforms.Grayscale(
+            num_output_channels=3
+        ),
+        transforms.ToTensor(),
+        transforms.Normalize(
+            mean=IMAGENET_MEAN,
+            std=IMAGENET_STD
         )
-        tensor = TF.to_tensor(image)
-        return TF.normalize(tensor, mean=self.mean, std=self.std)
+    ])
+    
+def get_eval_transform(image_size: tuple[int,int] = (int,int)):
+    return transforms.Compose([
+        transforms.Resize(
+            image_size,
+            antialias=True
+        ),
+        #The grayscale image is converted into 3 channels because the pretrained MobileNet expects 3-channel input.
+        transforms.Grayscale(
+            num_output_channels=3
+        ),
+        transforms.ToTensor(),
+        transforms.Normalize(
+            mean=IMAGENET_MEAN,
+            std=IMAGENET_STD
+        )
+    ])
