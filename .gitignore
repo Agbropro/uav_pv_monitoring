@@ -4,3 +4,5 @@ data/*
 weights
 
 *.orig
+
+*.log

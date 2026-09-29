@@ -1,0 +1,4 @@
+Best trial: 8
+Best validation loss: 0.5863
+Best parameters: {'batch_size': 64, 'image_size': '72x120', 'learning_rate': 0.00014050856870093735, 'weight_decay': 0.0013048816325475594, 'freeze_backbone': False}
+Best checkpoint: weights/optuna_mobilenet_v3_small/trial_8/best.pt

@@ -16,8 +16,9 @@ class Evaluator:
         self.model.eval()
         y_true = []
         y_pred = []
+        prediction_rows = []
         
-        with torch.inference_model():
+        with torch.inference_mode():
             for images, labels in dataloader:
                 images = images.to(self.device)
                 outputs = self.model(images)
@@ -32,6 +33,19 @@ class Evaluator:
                 y_pred.extend(
                     predictions.cpu().tolist()
                 )
+                confidence = torch.softmax(outputs, dim=1).amax(dim=1)
+                prediction_rows.extend(
+                    {
+                        "true_index": true_index,
+                        "predicted_index": predicted_index,
+                        "confidence": score,
+                    }
+                    for true_index, predicted_index, score in zip(
+                        labels.tolist(),
+                        predictions.cpu().tolist(),
+                        confidence.cpu().tolist(),
+                    )
+                )
 
         labels = list(
             range(len(self.class_names))
@@ -43,7 +57,7 @@ class Evaluator:
             labels=labels,
             target_names=self.class_names,
             output_dict=True,
-            zero_divison=0
+            zero_division=0
             )
         matrix = confusion_matrix(y_true,y_pred,labels=labels)
         metrics = {
@@ -90,6 +104,7 @@ class Evaluator:
             },
 
             "confusion_matrix": matrix.tolist(),
+            "predictions": prediction_rows,
         }
 
         return metrics

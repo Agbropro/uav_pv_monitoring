@@ -109,4 +109,4 @@ def main(model_save_path: str | Path = "weights/drone_v2"):
 
 
 if __name__ == "__main__":
-    main(model_save_path="weights/drone_v2")
+    main(model_save_path="weights/drone_optuna_1")
