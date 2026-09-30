@@ -6,3 +6,7 @@ torchvision
 scikit-learn
 optuna
 matplotlib
+python-dotenv
+fastapi
+uvicorn
+python-multipart

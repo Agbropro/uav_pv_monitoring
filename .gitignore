@@ -6,3 +6,4 @@ weights
 *.orig
 
 *.log
+.env
