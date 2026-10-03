@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Response, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, Response, UploadFile
 from pydantic import BaseModel
 from src.delivery.dependencies import AppServices, get_services
 from src.domain.schemas import PVInspection
@@ -76,12 +76,15 @@ def get_inspection_image(
 
 @router.post("/inspections",response_model=PVInspection)
 async def create_inspection(
+    request: Request,
     image:  Annotated[UploadFile, File()],
     latitude:   Annotated[float, Form()],
     longitude:  Annotated[float, Form()],
     observed_at:    Annotated[datetime, Form()],
     services: Annotated[AppServices,Depends(get_services)],
 ):
+    inspection_id = str(uuid.uuid4())
+    request.state.process_id = inspection_id
     if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
         raise HTTPException(status_code=422, detail="Invalid coordinates")
     if observed_at.tzinfo is None:
@@ -111,9 +114,11 @@ async def create_inspection(
         )
         return services.inspection_service.inspect(
             inspection_image = inspection_image,
-            timestamp = inspection_time
+            timestamp = inspection_time,
+            inspection_id=inspection_id,
         )
     except ValueError as exc:
+        services.api_logger.warning(f"Inspection request rejected | reason={exc}", process_id=inspection_id)
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     
 @router.get("/inspections/{inspection_id}", response_model=PVInspection)

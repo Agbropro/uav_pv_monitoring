@@ -26,3 +26,9 @@ class Asset(BaseModel):
     name:       str
     latitude:  float
     longitude:  float
+
+class Site(BaseModel):
+    site_id: str
+    name: str
+    latitude: float
+    longitude: float

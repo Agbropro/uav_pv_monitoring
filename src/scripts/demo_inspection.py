@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 from config.train_config import DEVICE, IMAGE_HEIGHT, IMAGE_WIDTH
 from src.infrastructure.local_image_storage import LocalImageStorage
+from src.infrastructure.loguru_logger import LoguruLogger, configure_logging
 from src.infrastructure.mobilenet_classifier import MobileNetClassifier
 from src.infrastructure.mysql_asset_repository import MySQLAssetRepository
 from src.infrastructure.mysql_config import DBConfig
@@ -28,6 +29,7 @@ def main(
     storage_path: str | Path = "data/images/inspection_image",
     max_distance_metres: float = 5.0,
 ):
+    configure_logging()
     load_dotenv(Path(__file__).resolve().parents[2] / ".env", override=True)
     config = DBConfig(
         host=os.environ.get("DB_HOST", "localhost"),
@@ -48,21 +50,25 @@ def main(
         class_names=class_names,
         device=device,
     )
+    LoguruLogger("MODEL-LOAD").info(f"Model loaded | checkpoint={Path(checkpoint_path).name} | device={device}")
 
     image_repository = LocalImageStorage(storage_path=str(storage_path))
     inspection_repository = MySQLInspectionRepository(config=config)
     image_service = ImageService(
         image_repository=image_repository,
         image_validator=PillowImageValidator(),
+        logger=LoguruLogger("IMAGE-SAVE"),
     )
     inspection_service = InspectionService(
         image_repository=image_repository,
         asset_repository=MySQLAssetRepository(
             config=config,
             max_distance_metres=max_distance_metres,
+            logger=LoguruLogger("ASSET-MATCH"),
         ),
         classifier=MobileNetClassifier(predictor=predictor),
         inspection_repository=inspection_repository,
+        logger=LoguruLogger("INFERENCE"),
     )
 
     image_path = Path(image_path)

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sites &amp; assets · PV Inspector</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./sites.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-content">
+      <a class="brand" href="./">PV Inspector</a>
+      <nav aria-label="Main navigation"><a href="./">Inspections</a><a href="./sites.html" aria-current="page">Sites &amp; assets</a></nav>
+    </div>
+  </header>
+  <main class="container">
+    <div class="page-heading">
+      <p class="eyebrow">Solar asset registry</p>
+      <h1>Sites &amp; assets</h1>
+      <p>Browse the registered sites and module coordinates. Select a site to view its assets.</p>
+    </div>
+    <section class="panel" aria-labelledby="sites-heading">
+      <div class="section-heading"><h2 id="sites-heading">Registered sites</h2><button id="refresh-sites" type="button" class="secondary">Refresh sites</button></div>
+      <p id="sites-message" class="message" role="status" aria-live="polite"></p>
+      <div class="table-scroll">
+        <table>
+          <caption class="visually-hidden">Sites registered in the database</caption>
+          <thead><tr><th scope="col">Site ID</th><th scope="col">Name</th><th scope="col">Latitude</th><th scope="col">Longitude</th><th scope="col">Assets</th></tr></thead>
+          <tbody id="sites-rows"></tbody>
+        </table>
+      </div>
+      <div class="pagination"><span id="sites-page"></span><div><button id="sites-previous" type="button" class="secondary" disabled>Previous</button><button id="sites-next" type="button" class="secondary" disabled>Next</button></div></div>
+    </section>
+    <section class="panel history-panel" aria-labelledby="assets-heading">
+      <div class="section-heading"><h2 id="assets-heading">All assets</h2><button id="all-assets" type="button" class="secondary">Show all assets</button></div>
+      <p id="assets-message" class="message" role="status" aria-live="polite"></p>
+      <div class="table-scroll">
+        <table>
+          <caption class="visually-hidden">Registered assets for the selected site, or all sites</caption>
+          <thead><tr><th scope="col">Asset ID</th><th scope="col">Name</th><th scope="col">Site ID</th><th scope="col">Latitude</th><th scope="col">Longitude</th></tr></thead>
+          <tbody id="assets-rows"></tbody>
+        </table>
+      </div>
+      <div class="pagination"><span id="assets-page"></span><div><button id="assets-previous" type="button" class="secondary" disabled>Previous</button><button id="assets-next" type="button" class="secondary" disabled>Next</button></div></div>
+    </section>
+    <footer>Coordinates are decimal degrees. This registry displays database records; it does not edit them.</footer>
+  </main>
+</body>
+</html>

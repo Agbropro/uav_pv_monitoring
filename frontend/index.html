@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PV Inspector</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-content">
+      <a class="brand" href="./">PV Inspector</a>
+      <nav aria-label="Main navigation"><a href="./" aria-current="page">Inspections</a><a href="./sites.html">Sites &amp; assets</a></nav>
+    </div>
+  </header>
+  <main class="container">
+    <div class="page-heading">
+      <p class="eyebrow">Solar asset monitoring</p>
+      <h1>Inspect a module.</h1>
+      <p>Upload a thermal module crop and its observation coordinates. Review the prediction and save an inspection.</p>
+    </div>
+
+    <div class="workspace">
+      <section class="panel" aria-labelledby="upload-heading">
+        <h2 id="upload-heading">New inspection</h2>
+        <form id="inspection-form">
+          <label for="image">Thermal module image</label>
+          <input id="image" name="image" type="file" accept=".jpg,.jpeg,.png" required aria-describedby="image-help">
+          <p class="help" id="image-help">JPG or PNG. Use an individual module crop, not a full aerial image.</p>
+          <figure class="preview" id="preview" hidden>
+            <img id="preview-image" alt="Selected thermal module">
+            <figcaption id="preview-name"></figcaption>
+          </figure>
+          <div class="field-pair">
+            <div><label for="latitude">Latitude</label><input id="latitude" name="latitude" type="number" min="-90" max="90" step="any" placeholder="−90 to 90" required aria-describedby="latitude-help"><p class="help" id="latitude-help">Range: −90 to 90 degrees.</p></div>
+            <div><label for="longitude">Longitude</label><input id="longitude" name="longitude" type="number" min="-180" max="180" step="any" placeholder="−180 to 180" required aria-describedby="longitude-help"><p class="help" id="longitude-help">Range: −180 to 180 degrees.</p></div>
+          </div>
+          <label for="observed-at">Observation time</label>
+          <input id="observed-at" type="datetime-local" step="1" required aria-describedby="time-help">
+          <p class="help" id="time-help">Your local time. Converted to UTC when submitted.</p>
+          <button id="submit-button" type="submit">Run inspection</button>
+          <p id="upload-message" class="message" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="panel result-panel" aria-labelledby="result-heading">
+        <h2 id="result-heading">Inspection result</h2>
+        <p id="result-placeholder" class="empty-state">Your result will appear here. You can also select an inspection from the history below.</p>
+        <div id="result" hidden>
+          <span id="result-status" class="badge"></span>
+          <div class="result-body">
+            <div><img id="result-image" class="result-image" alt="Inspected thermal module"><p id="image-message" class="help" role="status"></p></div>
+            <dl>
+              <dt>Predicted category</dt><dd id="result-category"></dd>
+              <dt>Category confidence</dt><dd id="result-confidence"></dd>
+              <dt>Matched asset</dt><dd id="result-asset"></dd>
+              <dt>Observed</dt><dd id="result-observed"></dd>
+              <dt>Coordinates</dt><dd id="result-coordinates"></dd>
+            </dl>
+          </div>
+          <details><summary>Inspection record</summary><pre id="result-json"></pre></details>
+        </div>
+        <p class="result-note">A model prediction is a review aid. “No anomaly detected” does not guarantee panel health. Confidence refers to the predicted category.</p>
+      </section>
+    </div>
+
+    <section class="panel history-panel" aria-labelledby="history-heading">
+      <div class="section-heading"><h2 id="history-heading">Inspection history</h2><button id="refresh" type="button" class="secondary">Refresh</button></div>
+      <form id="filter-form" class="filters">
+        <div><label for="filter-asset">Asset ID</label><input id="filter-asset" placeholder="All assets"></div>
+        <div><label for="filter-fault">Predicted category</label><input id="filter-fault" placeholder="All categories" aria-describedby="filter-help"></div>
+        <div><label for="filter-after">Inspected from</label><input id="filter-after" type="datetime-local"></div>
+        <div><label for="filter-before">Inspected until</label><input id="filter-before" type="datetime-local"></div>
+        <button type="submit" class="secondary">Apply filters</button>
+        <button id="clear-filters" type="button" class="secondary">Clear</button>
+      </form>
+      <p class="help" id="filter-help">Category matches the exact model label, for example No-Anomaly. Dates use your local time.</p>
+      <p id="history-message" class="message" role="status" aria-live="polite"></p>
+      <div class="table-scroll">
+        <table>
+          <caption class="visually-hidden">Saved inspections, newest first</caption>
+          <thead><tr><th scope="col">Inspected</th><th scope="col">Asset</th><th scope="col">Status</th><th scope="col">Category</th><th scope="col">Confidence</th><th scope="col">Record</th></tr></thead>
+          <tbody id="history-rows"></tbody>
+        </table>
+      </div>
+      <div class="pagination"><span id="page-label">No records loaded</span><div><button id="previous" class="secondary" type="button" disabled>Previous</button><button id="next" class="secondary" type="button" disabled>Next</button></div></div>
+    </section>
+    <footer>MobileNetV3 · Thermal module classification · Coordinate-based asset matching</footer>
+  </main>
+</body>
+</html>
