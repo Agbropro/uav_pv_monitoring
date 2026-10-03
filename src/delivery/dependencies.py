@@ -31,6 +31,9 @@ class AppServices:
 def build_services(checkpoint_path: str | Path = "weights/drone_optuna_1/best.pt",
                    storage_path: str | Path = "data/images/inspection_image")->AppServices:
     load_dotenv(PROJECT_ROOT / ".env",override=True)
+    max_distance_metres = float(
+        os.environ.get("ASSET_MAX_DISTANCE_METRES", "5.0")
+    )
     config = DBConfig(
         host=os.environ.get("DB_HOST", "localhost"),
         port=int(os.environ.get("DB_PORT", "3306")),
@@ -83,7 +86,10 @@ def build_services(checkpoint_path: str | Path = "weights/drone_optuna_1/best.pt
         ),
         inspection_service=InspectionService(
             image_repository=image_repository,
-            asset_repository=MySQLAssetRepository(config=config),
+            asset_repository=MySQLAssetRepository(
+                config=config,
+                max_distance_metres=max_distance_metres,
+            ),
             classifier=MobileNetClassifier(predictor=predictor),
             inspection_repository=inspection_repository
         ),

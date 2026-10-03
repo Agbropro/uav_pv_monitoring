@@ -26,6 +26,7 @@ def main(
     latitude: float,
     longitude: float,
     storage_path: str | Path = "data/images/inspection_image",
+    max_distance_metres: float = 5.0,
 ):
     load_dotenv(Path(__file__).resolve().parents[2] / ".env", override=True)
     config = DBConfig(
@@ -56,7 +57,10 @@ def main(
     )
     inspection_service = InspectionService(
         image_repository=image_repository,
-        asset_repository=MySQLAssetRepository(config=config),
+        asset_repository=MySQLAssetRepository(
+            config=config,
+            max_distance_metres=max_distance_metres,
+        ),
         classifier=MobileNetClassifier(predictor=predictor),
         inspection_repository=inspection_repository,
     )
