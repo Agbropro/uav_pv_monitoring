@@ -8,6 +8,7 @@ from fastapi import Request
 
 from config.train_config import DEVICE, IMAGE_HEIGHT, IMAGE_WIDTH
 from src.application.inspection_repository import InspectionRepository
+from src.application.image_repository import ImageRepository
 from src.infrastructure.local_image_storage import LocalImageStorage
 from src.infrastructure.mobilenet_classifier import MobileNetClassifier
 from src.infrastructure.mysql_asset_repository import MySQLAssetRepository
@@ -27,6 +28,7 @@ class AppServices:
     image_service:          ImageService
     inspection_service:     InspectionService
     inspection_repository:  InspectionRepository
+    image_repository: ImageRepository
     
 def build_services(checkpoint_path: str | Path = "weights/drone_optuna_1/best.pt",
                    storage_path: str | Path = "data/images/inspection_image")->AppServices:
@@ -94,6 +96,7 @@ def build_services(checkpoint_path: str | Path = "weights/drone_optuna_1/best.pt
             inspection_repository=inspection_repository
         ),
         inspection_repository=inspection_repository,
+        image_repository=image_repository,
     )
 
 def get_services(request: Request)->AppServices:
