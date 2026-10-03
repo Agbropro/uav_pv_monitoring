@@ -19,6 +19,7 @@ def main(
     dataset_path: str | Path,
     checkpoint_path: str | Path,
     analysis_path: str | Path | None = None,
+    dataset_format: str = "metadata",
 ):
     checkpoint_path = Path(checkpoint_path)
     device = torch.device("cuda" if DEVICE == "cuda" and torch.cuda.is_available() else "cpu")
@@ -29,7 +30,7 @@ def main(
         train_transform=eval_transform,
         eval_transform=eval_transform,
         batch_size=BATCH_SIZE,
-        dataset_format="metadata",
+        dataset_format=dataset_format,
     )
     if len(class_names) != NUM_CLASSES:
         raise ValueError(f"Expected {NUM_CLASSES} classes, but found {len(class_names)}")
@@ -107,4 +108,5 @@ if __name__ == "__main__":
         dataset_path="data/InfraredSolarModules",
         checkpoint_path="weights/drone_optuna_1/best.pt",
         analysis_path=None,
+        dataset_format="split_folders",
     )

@@ -78,6 +78,18 @@ def create_datasets(
     random_state: int = 42,
     dataset_format: str = "metadata",
 ):
+    if dataset_format == "split_folders":
+        datasets = []
+        class_names = None
+        for split, transform in (("train", train_transform), ("val", eval_transform), ("test", eval_transform)):
+            samples, split_classes = load_samples(Path(dataset_path) / split, "image_folder")
+            if class_names is None:
+                class_names = split_classes
+            elif split_classes != class_names:
+                raise ValueError(f"Class folders in {split} differ from the other splits")
+            datasets.append(PVFaultDataset(samples, transform))
+        return (*datasets, class_names)
+
     if (
         not isclose(train_ratio + val_ratio + test_ratio, 1.0)
         or min(train_ratio, val_ratio, test_ratio) <= 0
